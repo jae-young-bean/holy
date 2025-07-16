@@ -34,7 +34,7 @@ function Write() {
       setLoading(false);
       return;
     }
-    const { data, error } = await supabase.from("diaries").insert([
+    const { data, error } = await supabase.from("emotion_diary_entries").insert([
       {
         user_id: session.user.id,
         content,

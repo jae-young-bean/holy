@@ -24,7 +24,7 @@ function Result() {
       setSession(session);
       if (session?.user) {
         const diaryId = location.state?.diaryId;
-        let query = supabase.from("diaries").select("*").eq("user_id", session.user.id);
+        let query = supabase.from("emotion_diary_entries").select("*").eq("user_id", session.user.id);
         if (diaryId) {
           query = query.eq("id", diaryId);
         } else {
