@@ -13,6 +13,15 @@ const emotionMeta = {
   불안: { color: "#818cf8", emoji: "😰" },
 };
 
+// 영어 감정명 → 한글 감정명 매핑
+const emotionMap = {
+  joy: "기쁨",
+  sadness: "슬픔",
+  anger: "분노",
+  fear: "불안",
+  surprise: "평온", // 필요시 "놀람" 등으로 조정
+};
+
 function Result() {
   const [session, setSession] = useState(null);
   const [diary, setDiary] = useState(null);
@@ -45,7 +54,13 @@ function Result() {
   if (!diary) return <div className="text-center text-gray-500">작성한 일기가 없습니다.<br/><Link to="/write" className="text-blue-600 underline">일기 작성하러 가기</Link></div>;
 
   const emotionPercents = analyzeEmotionPercent(diary.content);
-  const sortedEmotions = Object.entries(emotionPercents).sort((a, b) => b[1] - a[1]);
+  // 감정명 영어 → 한글 변환
+  const mappedEmotionPercents = {};
+  Object.entries(emotionPercents).forEach(([en, percent]) => {
+    const ko = emotionMap[en] || en;
+    mappedEmotionPercents[ko] = percent;
+  });
+  const sortedEmotions = Object.entries(mappedEmotionPercents).sort((a, b) => b[1] - a[1]);
   const topEmotion = sortedEmotions[0][0];
   const musicList = recommendMusic(topEmotion);
 
@@ -53,8 +68,8 @@ function Result() {
     <section className="w-full max-w-xl bg-white/90 rounded-3xl shadow-xl p-10 flex flex-col items-center border border-blue-100">
       <h2 className="text-2xl font-bold text-blue-700 mb-4">감정 분석 결과</h2>
       <div className="flex flex-col items-center gap-2 mb-6">
-        <span className="text-5xl" style={{ color: emotionMeta[topEmotion].color }}>{emotionMeta[topEmotion].emoji}</span>
-        <span className="text-xl font-semibold" style={{ color: emotionMeta[topEmotion].color }}>{topEmotion}</span>
+        <span className="text-5xl" style={{ color: emotionMeta[topEmotion]?.color }}>{emotionMeta[topEmotion]?.emoji}</span>
+        <span className="text-xl font-semibold" style={{ color: emotionMeta[topEmotion]?.color }}>{topEmotion}</span>
       </div>
       <div className="w-full bg-blue-50 rounded-xl p-4 text-gray-700 mb-6">
         <div className="text-sm text-gray-400 mb-1">내가 쓴 일기</div>
@@ -65,11 +80,11 @@ function Result() {
         <ul className="space-y-2">
           {sortedEmotions.map(([emotion, percent]) => (
             <li key={emotion} className="flex items-center gap-2">
-              <span className="w-16 text-sm font-medium" style={{ color: emotionMeta[emotion].color }}>{emotion}</span>
+              <span className="w-16 text-sm font-medium" style={{ color: emotionMeta[emotion]?.color }}>{emotion}</span>
               <div className="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
-                <div className="h-4 rounded-full" style={{ width: `${percent}%`, background: emotionMeta[emotion].color, transition: 'width 0.5s' }}></div>
+                <div className="h-4 rounded-full" style={{ width: `${percent}%`, background: emotionMeta[emotion]?.color, transition: 'width 0.5s' }}></div>
               </div>
-              <span className="w-10 text-right text-sm font-bold" style={{ color: emotionMeta[emotion].color }}>{percent}%</span>
+              <span className="w-10 text-right text-sm font-bold" style={{ color: emotionMeta[emotion]?.color }}>{percent}%</span>
             </li>
           ))}
         </ul>

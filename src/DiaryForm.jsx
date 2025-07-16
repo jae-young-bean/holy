@@ -16,21 +16,25 @@ function DiaryForm({ user, onSubmit }) {
     setLoading(true);
     setError('');
     setSuccess(false);
-    const emotionResult = analyzeEmotion(content);
-    const { error } = await supabase.from('diaries').insert([
-      {
-        user_id: user.id,
-        content,
-        emotion: emotionResult,
-      },
-    ]);
-    if (error) {
-      setError(error.message);
-    } else {
-      setSuccess(true);
-      setEmotion(emotionResult);
-      setContent('');
-      if (onSubmit) onSubmit();
+    try {
+      const emotionResult = await analyzeEmotion(content);
+      const { error } = await supabase.from('diaries').insert([
+        {
+          user_id: user.id,
+          content,
+          emotion: emotionResult,
+        },
+      ]);
+      if (error) {
+        setError(error.message);
+      } else {
+        setSuccess(true);
+        setEmotion(emotionResult);
+        setContent('');
+        if (onSubmit) onSubmit();
+      }
+    } catch (err) {
+      setError('감정 분석 또는 저장 중 오류가 발생했습니다.');
     }
     setLoading(false);
   };
@@ -49,7 +53,18 @@ function DiaryForm({ user, onSubmit }) {
       {success && (
         <div className="text-green-600 text-sm">
           일기가 저장되었습니다!<br />
-          감정 분석 결과: <b>{emotion}</b>
+          감정 분석 결과:<br />
+          {emotion && (
+            typeof emotion === 'object' ? (
+              <ul>
+                {Object.entries(emotion).map(([emo, percent]) => (
+                  <li key={emo}>{emo}: {percent}%</li>
+                ))}
+              </ul>
+            ) : (
+              <b>{emotion}</b>
+            )
+          )}
         </div>
       )}
       <button
