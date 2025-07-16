@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { supabase } from './supabaseClient';
-import { analyzeEmotion } from './emotionUtils';
+import { analyzeEmotionWithAI } from './emotionUtils';
 
 function DiaryForm({ user, onSubmit }) {
   const [content, setContent] = useState('');
@@ -17,7 +17,7 @@ function DiaryForm({ user, onSubmit }) {
     setError('');
     setSuccess(false);
     try {
-      const emotionResult = await analyzeEmotion(content);
+      const emotionResult = await analyzeEmotionWithAI(content);
       const { error } = await supabase.from('diaries').insert([
         {
           user_id: user.id,
@@ -54,17 +54,7 @@ function DiaryForm({ user, onSubmit }) {
         <div className="text-green-600 text-sm">
           일기가 저장되었습니다!<br />
           감정 분석 결과:<br />
-          {emotion && (
-            typeof emotion === 'object' ? (
-              <ul>
-                {Object.entries(emotion).map(([emo, percent]) => (
-                  <li key={emo}>{emo}: {percent}%</li>
-                ))}
-              </ul>
-            ) : (
-              <b>{emotion}</b>
-            )
-          )}
+          <b>{emotion}</b>
         </div>
       )}
       <button

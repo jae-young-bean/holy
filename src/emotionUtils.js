@@ -89,4 +89,22 @@ export function analyzeEmotionPercent(text) {
     result[emotion] = total > 0 ? Math.round((counts[emotion] / total) * 100) : 0;
   }
   return result;
+}
+
+// Supabase Edge Function으로 감정 분석 요청
+export async function analyzeEmotionWithAI(diary) {
+  const endpoint = "https://scojfbyhvlwlbnwwutke.supabase.co/functions/v1/swift-endpoint";
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjb2pmYnlodmx3bGJud3d1dGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI1NjA5MTQsImV4cCI6MjA2ODEzNjkxNH0.Q5riV53eC0Z1SONMBKi0BpJcs5aVQJxTDZZI8ZlG1GU"
+    },
+    body: JSON.stringify({ diary }),
+  });
+  if (!response.ok) {
+    throw new Error("감정 분석 요청 실패");
+  }
+  const data = await response.json();
+  return data.result;
 } 
