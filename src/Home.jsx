@@ -16,7 +16,10 @@ function Home() {
         <li>🎵 감정에 맞는 음악 추천</li>
         <li>🔒 안전한 개인정보 보호</li>
       </ul>
-      <Link to="/write" className="bg-gradient-to-r from-blue-600 to-blue-400 text-white font-bold px-8 py-3 rounded-full shadow-lg text-lg hover:scale-105 transition">지금 시작하기</Link>
+      <div className="flex gap-6 mt-4">
+        <Link to="/write" className="bg-gradient-to-r from-blue-600 to-blue-400 text-white font-bold px-8 py-3 rounded-full shadow-lg text-lg hover:scale-105 transition">일기 작성하기</Link>
+        <Link to="/result" className="bg-white border border-blue-400 text-blue-700 font-bold px-8 py-3 rounded-full shadow-lg text-lg hover:bg-blue-50 transition">최근 결과 보기</Link>
+      </div>
     </section>
   );
 }

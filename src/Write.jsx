@@ -29,16 +29,24 @@ function Write() {
       setLoading(false);
       return;
     }
-    const { error } = await supabase.from("diaries").insert([
+    if (!session || !session.user || !session.user.id) {
+      setError("로그인 세션이 유효하지 않습니다. 다시 로그인 해주세요.");
+      setLoading(false);
+      return;
+    }
+    const { data, error } = await supabase.from("diaries").insert([
       {
         user_id: session.user.id,
         content,
       },
-    ]);
+    ]).select();
     if (error) {
       setError(error.message);
+      console.error("일기 저장 오류:", error);
+    } else if (data && data[0] && data[0].id) {
+      navigate("/result", { state: { diaryId: data[0].id } });
     } else {
-      navigate("/result", { state: { content } });
+      setError("일기 저장 후 결과 페이지로 이동에 실패했습니다.");
     }
     setLoading(false);
   };
